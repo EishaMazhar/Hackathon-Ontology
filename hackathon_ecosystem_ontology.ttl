@@ -1,0 +1,1227 @@
+@prefix : <http://example.org/hackathon#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix hack: <http://example.org/hackathon#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@base <http://example.org/hackathon#> .
+
+<http://example.org/hackathon> rdf:type owl:Ontology ;
+                                owl:imports <http://www.w3.org/2004/02/skos/core> ,
+                                            foaf: ;
+                                dct:creator "Eisha Tir Raazia, UNIGE" ;
+                                rdfs:comment "An OWL ontology for hackathons, teams, projects, skills, topics, and awards, reusing FOAF and SKOS." ;
+                                owl:versionInfo 1.0 .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled
+<http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> rdf:type owl:AnnotationProperty .
+
+
+###  http://xmlns.com/foaf/0.1/homepage
+foaf:homepage rdf:type owl:AnnotationProperty .
+
+
+###  http://xmlns.com/foaf/0.1/name
+foaf:name rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.org/hackathon#hasAward
+hack:hasAward rdf:type owl:ObjectProperty ;
+              rdfs:domain hack:Project ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:hasTopic ;
+                            owl:someValuesFrom hack:Topic
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:requiresSkill ;
+                            owl:someValuesFrom hack:Skill
+                          ] ;
+              rdfs:range hack:Award .
+
+
+###  http://example.org/hackathon#hasParticipant
+hack:hasParticipant rdf:type owl:ObjectProperty ;
+                    owl:inverseOf hack:memberOfTeam ;
+                    rdfs:domain hack:Team ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty hack:hasParticipant ;
+                                  owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                  owl:onClass hack:Participant
+                                ] ;
+                    rdfs:range hack:Participant ,
+                               foaf:Person .
+
+
+###  http://example.org/hackathon#hasSkill
+hack:hasSkill rdf:type owl:ObjectProperty ;
+              rdfs:domain hack:Participant ,
+                          foaf:Person ;
+              rdfs:range hack:Skill ,
+                         skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] .
+
+
+###  http://example.org/hackathon#hasTeam
+hack:hasTeam rdf:type owl:ObjectProperty ;
+             owl:inverseOf hack:isTeamOf ;
+             rdfs:domain hack:Hackathon ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:hasTeam ;
+                           owl:someValuesFrom hack:Team
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:organizedBy ;
+                           owl:someValuesFrom hack:Organization
+                         ] ;
+             rdfs:range hack:Team ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty hack:hasParticipant ;
+                          owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                          owl:onClass hack:Participant
+                        ] .
+
+
+###  http://example.org/hackathon#hasTopic
+hack:hasTopic rdf:type owl:ObjectProperty ;
+              rdfs:range hack:Topic ,
+                         skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] .
+
+
+###  http://example.org/hackathon#isTeamOf
+hack:isTeamOf rdf:type owl:ObjectProperty ;
+              rdfs:domain hack:Team ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:hasParticipant ;
+                            owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                            owl:onClass hack:Participant
+                          ] ;
+              rdfs:range hack:Hackathon ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:hasTeam ;
+                           owl:someValuesFrom hack:Team
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:organizedBy ;
+                           owl:someValuesFrom hack:Organization
+                         ] .
+
+
+###  http://example.org/hackathon#memberOfTeam
+hack:memberOfTeam rdf:type owl:ObjectProperty ;
+                  rdfs:domain hack:Participant ,
+                              foaf:Person ;
+                  rdfs:range hack:Team ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:hasParticipant ;
+                               owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                               owl:onClass hack:Participant
+                             ] .
+
+
+###  http://example.org/hackathon#organizedBy
+hack:organizedBy rdf:type owl:ObjectProperty ;
+                 rdfs:domain hack:Hackathon ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:hasTeam ;
+                               owl:someValuesFrom hack:Team
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:organizedBy ;
+                               owl:someValuesFrom hack:Organization
+                             ] ;
+                 rdfs:range hack:Organization ,
+                            foaf:Organization .
+
+
+###  http://example.org/hackathon#requiresSkill
+hack:requiresSkill rdf:type owl:ObjectProperty ;
+                   rdfs:domain hack:Project ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:hasTopic ;
+                                 owl:someValuesFrom hack:Topic
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:requiresSkill ;
+                                 owl:someValuesFrom hack:Skill
+                               ] ;
+                   rdfs:range hack:Skill ,
+                              skos:Concept ,
+                              [ rdf:type owl:Class ;
+                                owl:unionOf ( skos:Collection
+                                              skos:Concept
+                                            )
+                              ] .
+
+
+###  http://example.org/hackathon#worksOn
+hack:worksOn rdf:type owl:ObjectProperty ;
+             rdfs:domain hack:Team ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:hasParticipant ;
+                           owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                           owl:onClass hack:Participant
+                         ] ;
+             rdfs:range hack:Project ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty hack:hasTopic ;
+                          owl:someValuesFrom hack:Topic
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty hack:requiresSkill ;
+                          owl:someValuesFrom hack:Skill
+                        ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#broadMatch
+skos:broadMatch rdfs:subPropertyOf skos:broaderTransitive ,
+                                   skos:semanticRelation ;
+                rdfs:domain skos:Concept ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] ;
+                rdfs:range skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#broader
+skos:broader rdfs:subPropertyOf skos:semanticRelation ;
+             rdfs:domain skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] ;
+             rdfs:range skos:Concept ,
+                        [ rdf:type owl:Class ;
+                          owl:unionOf ( skos:Collection
+                                        skos:Concept
+                                      )
+                        ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#broaderTransitive
+skos:broaderTransitive rdfs:domain skos:Concept ,
+                                   [ rdf:type owl:Class ;
+                                     owl:unionOf ( skos:Collection
+                                                   skos:Concept
+                                                 )
+                                   ] ;
+                       rdfs:range skos:Concept ,
+                                  [ rdf:type owl:Class ;
+                                    owl:unionOf ( skos:Collection
+                                                  skos:Concept
+                                                )
+                                  ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#closeMatch
+skos:closeMatch rdfs:subPropertyOf skos:semanticRelation ;
+                rdfs:domain skos:Concept ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] ;
+                rdfs:range skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#exactMatch
+skos:exactMatch rdfs:subPropertyOf skos:mappingRelation ,
+                                   skos:semanticRelation ;
+                rdfs:domain skos:Concept ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] ;
+                rdfs:range skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#hasTopConcept
+skos:hasTopConcept rdfs:range [ rdf:type owl:Class ;
+                                owl:unionOf ( skos:Collection
+                                              skos:Concept
+                                            )
+                              ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#mappingRelation
+skos:mappingRelation rdfs:domain skos:Concept ,
+                                 [ rdf:type owl:Class ;
+                                   owl:unionOf ( skos:Collection
+                                                 skos:Concept
+                                               )
+                                 ] ;
+                     rdfs:range skos:Concept ,
+                                [ rdf:type owl:Class ;
+                                  owl:unionOf ( skos:Collection
+                                                skos:Concept
+                                              )
+                                ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#member
+skos:member rdfs:domain [ rdf:type owl:Class ;
+                          owl:unionOf ( skos:Collection
+                                        skos:Concept
+                                      )
+                        ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#memberList
+skos:memberList rdfs:domain skos:Collection ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#narrowMatch
+skos:narrowMatch rdfs:subPropertyOf skos:narrowerTransitive ,
+                                    skos:semanticRelation ;
+                 rdfs:domain skos:Concept ,
+                             [ rdf:type owl:Class ;
+                               owl:unionOf ( skos:Collection
+                                             skos:Concept
+                                           )
+                             ] ;
+                 rdfs:range skos:Concept ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#narrower
+skos:narrower rdfs:subPropertyOf skos:semanticRelation ;
+              rdfs:domain skos:Concept ,
+                          [ rdf:type owl:Class ;
+                            owl:unionOf ( skos:Collection
+                                          skos:Concept
+                                        )
+                          ] ;
+              rdfs:range skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#narrowerTransitive
+skos:narrowerTransitive rdfs:domain skos:Concept ,
+                                    [ rdf:type owl:Class ;
+                                      owl:unionOf ( skos:Collection
+                                                    skos:Concept
+                                                  )
+                                    ] ;
+                        rdfs:range skos:Concept ,
+                                   [ rdf:type owl:Class ;
+                                     owl:unionOf ( skos:Collection
+                                                   skos:Concept
+                                                 )
+                                   ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#related
+skos:related rdfs:domain skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] ;
+             rdfs:range skos:Concept ,
+                        [ rdf:type owl:Class ;
+                          owl:unionOf ( skos:Collection
+                                        skos:Concept
+                                      )
+                        ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#relatedMatch
+skos:relatedMatch rdfs:subPropertyOf skos:semanticRelation ;
+                  rdfs:domain skos:Concept ,
+                              [ rdf:type owl:Class ;
+                                owl:unionOf ( skos:Collection
+                                              skos:Concept
+                                            )
+                              ] ;
+                  rdfs:range skos:Concept ,
+                             [ rdf:type owl:Class ;
+                               owl:unionOf ( skos:Collection
+                                             skos:Concept
+                                           )
+                             ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#semanticRelation
+skos:semanticRelation rdfs:domain [ rdf:type owl:Class ;
+                                    owl:unionOf ( skos:Collection
+                                                  skos:Concept
+                                                )
+                                  ] ;
+                      rdfs:range [ rdf:type owl:Class ;
+                                   owl:unionOf ( skos:Collection
+                                                 skos:Concept
+                                               )
+                                 ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#topConceptOf
+skos:topConceptOf rdfs:domain [ rdf:type owl:Class ;
+                                owl:unionOf ( skos:Collection
+                                              skos:Concept
+                                            )
+                              ] .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.org/hackathon#deadline
+hack:deadline rdf:type owl:DatatypeProperty ;
+              rdfs:domain hack:Hackathon ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:hasTeam ;
+                            owl:someValuesFrom hack:Team
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:organizedBy ;
+                            owl:someValuesFrom hack:Organization
+                          ] ;
+              rdfs:range xsd:dateTime .
+
+
+###  http://example.org/hackathon#endDate
+hack:endDate rdf:type owl:DatatypeProperty ;
+             rdfs:domain hack:Hackathon ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:hasTeam ;
+                           owl:someValuesFrom hack:Team
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty hack:organizedBy ;
+                           owl:someValuesFrom hack:Organization
+                         ] ;
+             rdfs:range xsd:dateTime .
+
+
+###  http://example.org/hackathon#githubUrl
+hack:githubUrl rdf:type owl:DatatypeProperty ;
+               rdfs:domain hack:Project ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty hack:hasTopic ;
+                             owl:someValuesFrom hack:Topic
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty hack:requiresSkill ;
+                             owl:someValuesFrom hack:Skill
+                           ] ;
+               rdfs:range xsd:anyURI .
+
+
+###  http://example.org/hackathon#startDate
+hack:startDate rdf:type owl:DatatypeProperty ;
+               rdfs:domain hack:Hackathon ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty hack:hasTeam ;
+                             owl:someValuesFrom hack:Team
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty hack:organizedBy ;
+                             owl:someValuesFrom hack:Organization
+                           ] ;
+               rdfs:range xsd:dateTime .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.org/hackathon#Award
+hack:Award rdf:type owl:Class ;
+           owl:disjointWith hack:Hackathon ,
+                            hack:Organization ,
+                            hack:Participant ,
+                            hack:Project ,
+                            hack:Skill ,
+                            hack:Team ,
+                            hack:Topic .
+
+
+###  http://example.org/hackathon#DataScienceTeam
+hack:DataScienceTeam rdf:type owl:Class ;
+                     rdfs:subClassOf hack:Team ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty hack:hasParticipant ;
+                                       owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                       owl:onClass hack:Participant
+                                     ] .
+
+
+###  http://example.org/hackathon#Hackathon
+hack:Hackathon rdf:type owl:Class ;
+               rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:hasTeam ;
+                                 owl:someValuesFrom hack:Team
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:organizedBy ;
+                                 owl:someValuesFrom hack:Organization
+                               ] ;
+               owl:disjointWith hack:Organization ,
+                                hack:Participant ,
+                                hack:Project ,
+                                hack:Skill ,
+                                hack:Team ,
+                                hack:Topic .
+
+
+###  http://example.org/hackathon#Judge
+hack:Judge rdf:type owl:Class ;
+           rdfs:subClassOf foaf:Person .
+
+
+###  http://example.org/hackathon#Mentor
+hack:Mentor rdf:type owl:Class ;
+            rdfs:subClassOf foaf:Person .
+
+
+###  http://example.org/hackathon#Organization
+hack:Organization rdf:type owl:Class ;
+                  rdfs:subClassOf foaf:Organization ;
+                  owl:disjointWith hack:Participant ,
+                                   hack:Project ,
+                                   hack:Skill ,
+                                   hack:Team ,
+                                   hack:Topic .
+
+
+###  http://example.org/hackathon#Participant
+hack:Participant rdf:type owl:Class ;
+                 rdfs:subClassOf foaf:Person ;
+                 owl:disjointWith hack:Project ,
+                                  hack:Skill ,
+                                  hack:Team ,
+                                  hack:Topic .
+
+
+###  http://example.org/hackathon#Project
+hack:Project rdf:type owl:Class ;
+             rdfs:subClassOf [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:hasTopic ;
+                               owl:someValuesFrom hack:Topic
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:requiresSkill ;
+                               owl:someValuesFrom hack:Skill
+                             ] ;
+             owl:disjointWith hack:Skill ,
+                              hack:Team ,
+                              hack:Topic .
+
+
+###  http://example.org/hackathon#Skill
+hack:Skill rdf:type owl:Class ;
+           rdfs:subClassOf skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] ;
+           owl:disjointWith hack:Team ,
+                            hack:Topic .
+
+
+###  http://example.org/hackathon#Team
+hack:Team rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty hack:hasParticipant ;
+                            owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                            owl:onClass hack:Participant
+                          ] ;
+          owl:disjointWith hack:Topic .
+
+
+###  http://example.org/hackathon#Topic
+hack:Topic rdf:type owl:Class ;
+           rdfs:subClassOf skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] .
+
+
+###  http://example.org/hackathon#WellBalancedTeam
+hack:WellBalancedTeam rdf:type owl:Class ;
+                      rdfs:subClassOf hack:Team ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty hack:hasParticipant ;
+                                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                        owl:onClass hack:Participant
+                                      ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#Collection
+skos:Collection rdfs:subClassOf [ rdf:type owl:Class ;
+                                  owl:unionOf ( skos:Collection
+                                                skos:Concept
+                                              )
+                                ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#Concept
+skos:Concept rdfs:subClassOf [ rdf:type owl:Class ;
+                               owl:unionOf ( skos:Collection
+                                             skos:Concept
+                                           )
+                             ] .
+
+
+###  http://www.w3.org/2004/02/skos/core#OrderedCollection
+skos:OrderedCollection rdfs:subClassOf [ rdf:type owl:Class ;
+                                         owl:unionOf ( skos:Collection
+                                                       skos:Concept
+                                                     )
+                                       ] .
+
+
+###  http://xmlns.com/foaf/0.1/Organization
+foaf:Organization rdf:type owl:Class .
+
+
+###  http://xmlns.com/foaf/0.1/Person
+foaf:Person rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://example.org/hackathon#AwardBestHealth
+hack:AwardBestHealth rdf:type owl:NamedIndividual ,
+                              hack:Award ;
+                     dct:title "Best Health Innovation"@en .
+
+
+###  http://example.org/hackathon#AwardBestSustainability
+hack:AwardBestSustainability rdf:type owl:NamedIndividual ,
+                                      hack:Award ;
+                             dct:title "Best Sustainability Project"@en .
+
+
+###  http://example.org/hackathon#AwardJuryMention
+hack:AwardJuryMention rdf:type owl:NamedIndividual ,
+                               hack:Award ;
+                      dct:title "Jury Special Mention"@en .
+
+
+###  http://example.org/hackathon#HackathonClimate2025
+hack:HackathonClimate2025 rdf:type owl:NamedIndividual ,
+                                   hack:Hackathon ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty hack:hasTeam ;
+                                     owl:someValuesFrom hack:Team
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty hack:hasTopic ;
+                                     owl:someValuesFrom hack:Topic
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty hack:organizedBy ;
+                                     owl:someValuesFrom hack:Organization
+                                   ] ;
+                          hack:hasTeam hack:TeamCityGuard ;
+                          hack:hasTopic hack:TopicSDG11 ;
+                          hack:organizedBy hack:OrgEPFL ;
+                          hack:deadline "2025-09-05T23:59:00"^^xsd:dateTime ;
+                          hack:endDate "2025-09-17T18:00:00"^^xsd:dateTime ;
+                          hack:startDate "2025-09-15T09:00:00"^^xsd:dateTime ;
+                          dct:description "Urban climate resilience and flood monitoring"@en ;
+                          dct:title "Climate Resilience Hackathon 2025"@en .
+
+
+###  http://example.org/hackathon#HackathonHealth2025
+hack:HackathonHealth2025 rdf:type owl:NamedIndividual ,
+                                  hack:Hackathon ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty hack:hasTeam ;
+                                    owl:someValuesFrom hack:Team
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty hack:hasTopic ;
+                                    owl:someValuesFrom hack:Topic
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty hack:organizedBy ;
+                                    owl:someValuesFrom hack:Organization
+                                  ] ;
+                         hack:hasTeam hack:TeamInfinity ;
+                         hack:hasTopic hack:TopicSDG3 ;
+                         hack:organizedBy hack:OrgCERN ;
+                         hack:deadline "2025-10-01T23:59:00"^^xsd:dateTime ;
+                         hack:endDate "2025-10-12T18:00:00"^^xsd:dateTime ;
+                         hack:startDate "2025-10-10T09:00:00"^^xsd:dateTime ;
+                         dct:description "Solutions for good health and well-being"@en ;
+                         dct:title "HealthTech for SDG3 Hackathon 2025"@en .
+
+
+###  http://example.org/hackathon#HackathonSDG2025
+hack:HackathonSDG2025 rdf:type owl:NamedIndividual ,
+                               hack:Hackathon ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:hasTeam ;
+                                 owl:someValuesFrom hack:Team
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:hasTopic ;
+                                 owl:someValuesFrom hack:Topic
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:organizedBy ;
+                                 owl:someValuesFrom hack:Organization
+                               ] ;
+                      hack:hasTeam hack:TeamDataHeroes ,
+                                   hack:TeamInfinity ;
+                      hack:hasTopic hack:TopicAI4Good ;
+                      hack:organizedBy hack:OrgUNIGE ;
+                      hack:deadline "2025-11-20T23:59:00"^^xsd:dateTime ;
+                      hack:endDate "2025-11-30T18:00:00"^^xsd:dateTime ;
+                      hack:startDate "2025-11-28T09:00:00"^^xsd:dateTime ;
+                      dct:description "Hackathon on sustainable development goals"@en ;
+                      dct:title "SDG Innovation Hackathon 2025"@en .
+
+
+###  http://example.org/hackathon#OrgCERN
+hack:OrgCERN rdf:type owl:NamedIndividual ,
+                      hack:Organization ,
+                      foaf:Organization ;
+             foaf:homepage <https://home.cern> ;
+             foaf:name "CERN" .
+
+
+###  http://example.org/hackathon#OrgEPFL
+hack:OrgEPFL rdf:type owl:NamedIndividual ,
+                      hack:Organization ,
+                      foaf:Organization ;
+             foaf:homepage <https://www.epfl.ch> ;
+             foaf:name "EPFL" .
+
+
+###  http://example.org/hackathon#OrgUNIGE
+hack:OrgUNIGE rdf:type owl:NamedIndividual ,
+                       hack:Organization ,
+                       foaf:Organization ;
+              foaf:homepage <https://www.unige.ch> ;
+              foaf:name "University of Geneva" .
+
+
+###  http://example.org/hackathon#ParticipantAlex
+hack:ParticipantAlex rdf:type owl:NamedIndividual ,
+                              hack:Participant ,
+                              foaf:Person ;
+                     hack:hasSkill hack:SkillUXDesign ,
+                                   hack:SkillWebDev ;
+                     hack:memberOfTeam hack:TeamInfinity ;
+                     foaf:name "Alex Rivera" .
+
+
+###  http://example.org/hackathon#ParticipantAmina
+hack:ParticipantAmina rdf:type owl:NamedIndividual ,
+                               hack:Participant ,
+                               foaf:Person ;
+                      hack:hasSkill hack:SkillProjectManagement ,
+                                    hack:SkillUXDesign ;
+                      hack:memberOfTeam hack:TeamInfinity ;
+                      foaf:name "Amina Khan" .
+
+
+###  http://example.org/hackathon#ParticipantEisha
+hack:ParticipantEisha rdf:type owl:NamedIndividual ,
+                               hack:Participant ,
+                               foaf:Person ;
+                      hack:hasParticipant hack:ParticipantLi ;
+                      hack:hasSkill hack:SkillDataScience ,
+                                    hack:SkillProjectManagement ,
+                                    hack:SkillWebDev ;
+                      hack:memberOfTeam hack:TeamDataHeroes ;
+                      foaf:name "Eisha Tir Raazia" .
+
+
+###  http://example.org/hackathon#ParticipantHassan
+hack:ParticipantHassan rdf:type owl:NamedIndividual ,
+                                hack:Participant ,
+                                foaf:Person ;
+                       hack:hasSkill hack:SkillCloudInfra ,
+                                     hack:SkillDataScience ,
+                                     hack:SkillDevOps ;
+                       hack:memberOfTeam hack:TeamCityGuard ,
+                                         hack:TeamDataHeroes ;
+                       foaf:name "Muhammad Hassan Ahmed" .
+
+
+###  http://example.org/hackathon#ParticipantLi
+hack:ParticipantLi rdf:type owl:NamedIndividual ,
+                            hack:Participant ,
+                            foaf:Person ;
+                   hack:hasSkill hack:SkillCloudInfra ,
+                                 hack:SkillDevOps ;
+                   hack:memberOfTeam hack:TeamCityGuard ;
+                   foaf:name "Li Wei" .
+
+
+###  http://example.org/hackathon#ParticipantSofia
+hack:ParticipantSofia rdf:type owl:NamedIndividual ,
+                               hack:Participant ,
+                               foaf:Person ;
+                      hack:hasSkill hack:SkillDataScience ,
+                                    hack:SkillML ;
+                      hack:memberOfTeam hack:TeamCityGuard ;
+                      foaf:name "Sofia Müller" .
+
+
+###  http://example.org/hackathon#ProjectFloodWatch
+hack:ProjectFloodWatch rdf:type owl:NamedIndividual ,
+                                hack:Project ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty hack:hasTopic ;
+                                  owl:someValuesFrom hack:Topic
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty hack:requiresSkill ;
+                                  owl:someValuesFrom hack:Skill
+                                ] ;
+                       hack:hasAward hack:AwardJuryMention ;
+                       hack:hasTopic hack:TopicSDG11 ;
+                       hack:requiresSkill hack:SkillCloudInfra ,
+                                          hack:SkillDataScience ,
+                                          hack:SkillDevOps ;
+                       hack:githubUrl <https://github.com/example/floodwatch> ;
+                       dct:description "Real-time flood risk monitoring dashboard"@en ;
+                       dct:title "FloodWatch"@en .
+
+
+###  http://example.org/hackathon#ProjectGreenCity
+hack:ProjectGreenCity rdf:type owl:NamedIndividual ,
+                               hack:Project ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:hasTopic ;
+                                 owl:someValuesFrom hack:Topic
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty hack:requiresSkill ;
+                                 owl:someValuesFrom hack:Skill
+                               ] ;
+                      hack:hasAward hack:AwardBestSustainability ;
+                      hack:hasTopic hack:TopicSDG11 ;
+                      hack:requiresSkill hack:SkillCloudInfra ,
+                                         hack:SkillDataScience ,
+                                         hack:SkillWebDev ;
+                      hack:githubUrl <https://github.com/example/green-city-insights> ;
+                      dct:description "Dashboard for urban sustainability metrics"@en ;
+                      dct:title "Green City Insights"@en .
+
+
+###  http://example.org/hackathon#ProjectHealthConnect
+hack:ProjectHealthConnect rdf:type owl:NamedIndividual ,
+                                   hack:Project ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty hack:hasTopic ;
+                                     owl:someValuesFrom hack:Topic
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty hack:requiresSkill ;
+                                     owl:someValuesFrom hack:Skill
+                                   ] ;
+                          hack:hasAward hack:AwardBestHealth ;
+                          hack:hasTopic hack:TopicSDG3 ;
+                          hack:requiresSkill hack:SkillML ,
+                                             hack:SkillProjectManagement ,
+                                             hack:SkillWebDev ;
+                          hack:githubUrl <https://github.com/example/health-connect> ;
+                          dct:description "Mobile app for community health workers"@en ;
+                          dct:title "HealthConnect"@en .
+
+
+###  http://example.org/hackathon#SkillCloudInfra
+hack:SkillCloudInfra rdf:type owl:NamedIndividual ,
+                              hack:Skill ,
+                              skos:Concept ,
+                              [ rdf:type owl:Class ;
+                                owl:unionOf ( skos:Collection
+                                              skos:Concept
+                                            )
+                              ] ;
+                     skos:inScheme hack:SkillScheme ;
+                     skos:prefLabel "Cloud Infrastructure"@en .
+
+
+###  http://example.org/hackathon#SkillDataScience
+hack:SkillDataScience rdf:type owl:NamedIndividual ,
+                               hack:Skill ,
+                               skos:Concept ,
+                               [ rdf:type owl:Class ;
+                                 owl:unionOf ( skos:Collection
+                                               skos:Concept
+                                             )
+                               ] ;
+                      skos:inScheme hack:SkillScheme ;
+                      skos:prefLabel "Data Science"@en .
+
+
+###  http://example.org/hackathon#SkillDevOps
+hack:SkillDevOps rdf:type owl:NamedIndividual ,
+                          hack:Skill ,
+                          skos:Concept ,
+                          [ rdf:type owl:Class ;
+                            owl:unionOf ( skos:Collection
+                                          skos:Concept
+                                        )
+                          ] ;
+                 skos:inScheme hack:SkillScheme ;
+                 skos:prefLabel "DevOps"@en .
+
+
+###  http://example.org/hackathon#SkillML
+hack:SkillML rdf:type owl:NamedIndividual ,
+                      hack:Skill ,
+                      skos:Concept ,
+                      [ rdf:type owl:Class ;
+                        owl:unionOf ( skos:Collection
+                                      skos:Concept
+                                    )
+                      ] ;
+             skos:inScheme hack:SkillScheme ;
+             skos:prefLabel "Machine Learning"@en .
+
+
+###  http://example.org/hackathon#SkillProjectManagement
+hack:SkillProjectManagement rdf:type owl:NamedIndividual ,
+                                     hack:Skill ,
+                                     skos:Concept ,
+                                     [ rdf:type owl:Class ;
+                                       owl:unionOf ( skos:Collection
+                                                     skos:Concept
+                                                   )
+                                     ] ;
+                            skos:inScheme hack:SkillScheme ;
+                            skos:prefLabel "Project Management"@en .
+
+
+###  http://example.org/hackathon#SkillScheme
+hack:SkillScheme rdf:type owl:NamedIndividual ,
+                          skos:ConceptScheme ;
+                 skos:prefLabel "Hackathon skill scheme"@en .
+
+
+###  http://example.org/hackathon#SkillUXDesign
+hack:SkillUXDesign rdf:type owl:NamedIndividual ,
+                            hack:Skill ,
+                            skos:Concept ,
+                            [ rdf:type owl:Class ;
+                              owl:unionOf ( skos:Collection
+                                            skos:Concept
+                                          )
+                            ] ;
+                   skos:inScheme hack:SkillScheme ;
+                   skos:prefLabel "UX Design"@en .
+
+
+###  http://example.org/hackathon#SkillWebDev
+hack:SkillWebDev rdf:type owl:NamedIndividual ,
+                          hack:Skill ,
+                          skos:Concept ,
+                          [ rdf:type owl:Class ;
+                            owl:unionOf ( skos:Collection
+                                          skos:Concept
+                                        )
+                          ] ;
+                 skos:inScheme hack:SkillScheme ;
+                 skos:prefLabel "Web Development"@en .
+
+
+###  http://example.org/hackathon#TeamCityGuard
+hack:TeamCityGuard rdf:type owl:NamedIndividual ,
+                            hack:Team ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty hack:hasParticipant ;
+                              owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                              owl:onClass hack:Participant
+                            ] ;
+                   hack:hasParticipant hack:ParticipantHassan ,
+                                       hack:ParticipantLi ,
+                                       hack:ParticipantSofia ;
+                   hack:isTeamOf hack:HackathonClimate2025 ;
+                   hack:worksOn hack:ProjectFloodWatch ;
+                   dct:title "City Guard"@en .
+
+
+###  http://example.org/hackathon#TeamDataHeroes
+hack:TeamDataHeroes rdf:type owl:NamedIndividual ,
+                             hack:Team ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty hack:hasParticipant ;
+                               owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                               owl:onClass hack:Participant
+                             ] ;
+                    hack:hasParticipant hack:ParticipantEisha ,
+                                        hack:ParticipantHassan ;
+                    hack:isTeamOf hack:HackathonSDG2025 ;
+                    hack:worksOn hack:ProjectGreenCity ;
+                    dct:title "Data Heroes"@en .
+
+
+###  http://example.org/hackathon#TeamInfinity
+hack:TeamInfinity rdf:type owl:NamedIndividual ,
+                           hack:Team ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty hack:hasParticipant ;
+                             owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                             owl:onClass hack:Participant
+                           ] ;
+                  hack:hasParticipant hack:ParticipantAlex ,
+                                      hack:ParticipantAmina ;
+                  hack:isTeamOf hack:HackathonHealth2025 ,
+                                hack:HackathonSDG2025 ;
+                  hack:worksOn hack:ProjectHealthConnect ;
+                  dct:title "Infinity"@en .
+
+
+###  http://example.org/hackathon#TopicAI4Good
+hack:TopicAI4Good rdf:type owl:NamedIndividual ,
+                           hack:Topic ,
+                           skos:Concept ,
+                           [ rdf:type owl:Class ;
+                             owl:unionOf ( skos:Collection
+                                           skos:Concept
+                                         )
+                           ] ;
+                  skos:inScheme hack:TopicScheme ;
+                  skos:prefLabel "AI for Good"@en .
+
+
+###  http://example.org/hackathon#TopicSDG11
+hack:TopicSDG11 rdf:type owl:NamedIndividual ,
+                         hack:Topic ,
+                         skos:Concept ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( skos:Collection
+                                         skos:Concept
+                                       )
+                         ] ;
+                skos:inScheme hack:TopicScheme ;
+                skos:prefLabel "Sustainable Cities and Communities"@en .
+
+
+###  http://example.org/hackathon#TopicSDG3
+hack:TopicSDG3 rdf:type owl:NamedIndividual ,
+                        hack:Topic ,
+                        skos:Concept ,
+                        [ rdf:type owl:Class ;
+                          owl:unionOf ( skos:Collection
+                                        skos:Concept
+                                      )
+                        ] ;
+               skos:inScheme hack:TopicScheme ;
+               skos:prefLabel "Good Health and Well-being"@en .
+
+
+###  http://example.org/hackathon#TopicSDG4
+hack:TopicSDG4 rdf:type owl:NamedIndividual ,
+                        hack:Topic ,
+                        skos:Concept ,
+                        [ rdf:type owl:Class ;
+                          owl:unionOf ( skos:Collection
+                                        skos:Concept
+                                      )
+                        ] ;
+               skos:inScheme hack:TopicScheme ;
+               skos:prefLabel "Quality Education"@en .
+
+
+###  http://example.org/hackathon#TopicScheme
+hack:TopicScheme rdf:type owl:NamedIndividual ,
+                          skos:ConceptScheme ;
+                 skos:prefLabel "Hackathon topic scheme"@en .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( hack:Award
+                hack:Hackathon
+                hack:Judge
+                hack:Mentor
+                hack:Participant
+                hack:Project
+                hack:Team
+                rdf:List
+                skos:Collection
+                skos:Concept
+                skos:ConceptScheme
+                foaf:Organization
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( hack:Award
+                hack:Hackathon
+                hack:Mentor
+                hack:Project
+                hack:Team
+                rdf:List
+                skos:Collection
+                skos:Concept
+                skos:ConceptScheme
+                foaf:Organization
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( hack:Judge
+                hack:Mentor
+                hack:Participant
+              )
+] .
+
+
+#################################################################
+#    Rules
+#################################################################
+
+hack:t rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+hack:p rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+hack:p1 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+hack:p2 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Any team with at least one participant who has the Data Science skill becomes a DataScienceTeam" ;
+   rdfs:label "DataScienceTeam" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> hack:Team ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> hack:t
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasParticipant ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> hack:t ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> hack:p
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasSkill ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> hack:p ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> hack:SkillDataScience
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> hack:DataScienceTeam ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> hack:t
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Any team that has at least one member with Data Science and at least one member with Web Development becomes a WellBalancedTeam" ;
+   rdfs:label "Well balanced team" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> hack:Team ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> hack:t
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasParticipant ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> hack:t ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> hack:p1
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasParticipant ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> hack:t ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> hack:p2
+                                                                           ] ;
+                                                                 rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                            rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                        <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasSkill ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument1> hack:p1 ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument2> hack:SkillDataScience
+                                                                                      ] ;
+                                                                            rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                       rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#propertyPredicate> hack:hasSkill ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument1> hack:p2 ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument2> hack:SkillWebDev
+                                                                                                 ] ;
+                                                                                       rdf:rest rdf:nil
+                                                                                     ]
+                                                                          ]
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> hack:WellBalancedTeam ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> hack:t
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

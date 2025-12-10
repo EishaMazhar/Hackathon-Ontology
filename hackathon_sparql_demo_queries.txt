@@ -1,0 +1,204 @@
+Hackathon Ontology – SPARQL Demo Queries
+===========================================
+
+Namespace prefixes
+------------------
+Use these prefixes at the top of each query (Protégé SPARQL tab):
+
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+------------------------------------------------------------
+1) List all hackathons with dates and topics  (CQ1 context)
+------------------------------------------------------------
+Purpose:
+Show basic event information: title, start/end date, and main topic.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?hackathonTitle ?start ?end ?topicLabel
+WHERE {
+  ?h a hack:Hackathon ;
+     dct:title ?hackathonTitle ;
+     hack:startDate ?start ;
+     hack:endDate ?end ;
+     hack:hasTopic ?topic .
+  ?topic skos:prefLabel ?topicLabel .
+}
+ORDER BY ?hackathonTitle
+
+
+------------------------------------------------------------
+2) Hackathons, their teams, and projects  (CQ1)
+------------------------------------------------------------
+Purpose:
+Show which teams belong to each hackathon and which project each team works on.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT ?hackathonTitle ?teamTitle ?projectTitle
+WHERE {
+  ?hack a hack:Hackathon ;
+        dct:title ?hackathonTitle ;
+        hack:hasTeam ?team .
+  ?team dct:title ?teamTitle ;
+        hack:worksOn ?project .
+  ?project dct:title ?projectTitle .
+}
+ORDER BY ?hackathonTitle ?teamTitle
+
+
+------------------------------------------------------------
+3) Teams, members, and their skills  (CQ2)
+------------------------------------------------------------
+Purpose:
+For each team, list the participants and the skills they bring.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?teamTitle ?personName ?skillLabel
+WHERE {
+  ?team a hack:Team ;
+        dct:title ?teamTitle ;
+        hack:hasParticipant ?p .
+  ?p foaf:name ?personName ;
+     hack:hasSkill ?skill .
+  ?skill skos:prefLabel ?skillLabel .
+}
+ORDER BY ?teamTitle ?personName ?skillLabel
+
+
+------------------------------------------------------------
+4) Projects with required skills and topics  (CQ3)
+------------------------------------------------------------
+Purpose:
+Show the skill requirements and topics for each project.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?projectTitle ?skillLabel ?topicLabel
+WHERE {
+  ?project a hack:Project ;
+           dct:title ?projectTitle ;
+           hack:requiresSkill ?skill ;
+           hack:hasTopic ?topic .
+  ?skill skos:prefLabel ?skillLabel .
+  ?topic skos:prefLabel ?topicLabel .
+}
+ORDER BY ?projectTitle ?skillLabel
+
+
+------------------------------------------------------------
+5) Projects and their awards  (CQ4)
+------------------------------------------------------------
+Purpose:
+List projects that have received awards and show the award titles.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT ?projectTitle ?awardTitle
+WHERE {
+  ?project a hack:Project ;
+           dct:title ?projectTitle ;
+           hack:hasAward ?award .
+  ?award dct:title ?awardTitle .
+}
+ORDER BY ?awardTitle ?projectTitle
+
+
+------------------------------------------------------------
+6) Teams with at least one data‑science participant  (CQ5)
+------------------------------------------------------------
+Purpose:
+Find all teams that have at least one member with the Data Science skill.
+This version does NOT depend on inferred DataScienceTeam types.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?teamTitle
+WHERE {
+  ?team a hack:Team ;
+        dct:title ?teamTitle ;
+        hack:hasParticipant ?p .
+  ?p hack:hasSkill hack:SkillDataScience .
+}
+ORDER BY ?teamTitle
+
+
+------------------------------------------------------------
+6b) Data‑science teams via inferred class  (CQ5, optional)
+------------------------------------------------------------
+Purpose:
+Shorter query if DataScienceTeam inferences have been materialised
+(asserted) in the ontology.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT ?teamTitle
+WHERE {
+  ?team a hack:DataScienceTeam ;
+        dct:title ?teamTitle .
+}
+ORDER BY ?teamTitle
+
+
+------------------------------------------------------------
+7) Well‑balanced teams (data science + web dev)  (CQ6)
+------------------------------------------------------------
+Purpose:
+Find teams that have at least one data‑science participant and at least
+one web‑development participant. This version does not depend on inferred
+WellBalancedTeam types.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?teamTitle
+WHERE {
+  ?team a hack:Team ;
+        dct:title ?teamTitle ;
+        hack:hasParticipant ?p1 , ?p2 .
+  ?p1 hack:hasSkill hack:SkillDataScience .
+  ?p2 hack:hasSkill hack:SkillWebDev .
+}
+ORDER BY ?teamTitle
+
+
+------------------------------------------------------------
+7b) Well‑balanced teams via inferred class  (CQ6, optional)
+------------------------------------------------------------
+Purpose:
+Shorter query if WellBalancedTeam inferences have been materialised
+(asserted) in the ontology.
+
+Query:
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+
+SELECT ?teamTitle
+WHERE {
+  ?team a hack:WellBalancedTeam ;
+        dct:title ?teamTitle .
+}
+ORDER BY ?teamTitle
