@@ -2,6 +2,7 @@
 <rdf:RDF xmlns="http://example.org/hackathon#"
      xml:base="http://example.org/hackathon"
      xmlns:dct="http://purl.org/dc/terms/"
+     xmlns:ns2="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -11,7 +12,6 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:swrl="http://www.w3.org/2003/11/swrl#"
-     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
      xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
     <owl:Ontology rdf:about="http://example.org/hackathon">
         <owl:imports rdf:resource="http://www.w3.org/2004/02/skos/core"/>
@@ -35,6 +35,12 @@
     <!-- http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled -->
 
     <owl:AnnotationProperty rdf:about="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled"/>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#minQualifiedCardinality -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#minQualifiedCardinality"/>
     
 
 
@@ -65,18 +71,6 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasAward">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Project"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopic"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#requiresSkill"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Skill"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Award"/>
     </owl:ObjectProperty>
     
@@ -87,13 +81,6 @@
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasParticipant">
         <owl:inverseOf rdf:resource="http://example.org/hackathon#memberOfTeam"/>
         <rdfs:domain rdf:resource="http://example.org/hackathon#Team"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Participant"/>
         <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     </owl:ObjectProperty>
@@ -106,15 +93,6 @@
         <rdfs:domain rdf:resource="http://example.org/hackathon#Participant"/>
         <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
         <rdfs:range rdf:resource="http://example.org/hackathon#Skill"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Collection"/>
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -124,26 +102,7 @@
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasTeam">
         <owl:inverseOf rdf:resource="http://example.org/hackathon#isTeamOf"/>
         <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Team"/>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
-            </owl:Restriction>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -152,15 +111,42 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasTopic">
         <rdfs:range rdf:resource="http://example.org/hackathon#Topic"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Collection"/>
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#hasTopicHackathon -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasTopicHackathon">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/hackathon#hasTopic"/>
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#hasTopicProject -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#hasTopicProject">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/hackathon#hasTopic"/>
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Project"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#isJudgedBy -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#isJudgedBy">
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Project"/>
+        <rdfs:range rdf:resource="http://example.org/hackathon#Judge"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#isMentoredby -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#isMentoredby">
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Team"/>
+        <rdfs:range rdf:resource="http://example.org/hackathon#Mentor"/>
     </owl:ObjectProperty>
     
 
@@ -169,26 +155,16 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#isTeamOf">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Team"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:range>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#judges -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#judges">
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Judge"/>
+        <rdfs:range rdf:resource="http://example.org/hackathon#Project"/>
     </owl:ObjectProperty>
     
 
@@ -199,13 +175,15 @@
         <rdfs:domain rdf:resource="http://example.org/hackathon#Participant"/>
         <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
         <rdfs:range rdf:resource="http://example.org/hackathon#Team"/>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
-            </owl:Restriction>
-        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/hackathon#mentors -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/hackathon#mentors">
+        <rdfs:domain rdf:resource="http://example.org/hackathon#Mentor"/>
+        <rdfs:range rdf:resource="http://example.org/hackathon#Team"/>
     </owl:ObjectProperty>
     
 
@@ -214,19 +192,6 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#organizedBy">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:range rdf:resource="http://example.org/hackathon#Organization"/>
         <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
     </owl:ObjectProperty>
     
@@ -236,28 +201,7 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#requiresSkill">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Project"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopic"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#requiresSkill"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Skill"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Skill"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Collection"/>
-                    <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -266,26 +210,7 @@
 
     <owl:ObjectProperty rdf:about="http://example.org/hackathon#worksOn">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Team"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://example.org/hackathon#Project"/>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopic"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
-            </owl:Restriction>
-        </rdfs:range>
-        <rdfs:range>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#requiresSkill"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Skill"/>
-            </owl:Restriction>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -674,18 +599,6 @@
 
     <owl:DatatypeProperty rdf:about="http://example.org/hackathon#deadline">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
     </owl:DatatypeProperty>
     
@@ -695,18 +608,6 @@
 
     <owl:DatatypeProperty rdf:about="http://example.org/hackathon#endDate">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
     </owl:DatatypeProperty>
     
@@ -716,18 +617,6 @@
 
     <owl:DatatypeProperty rdf:about="http://example.org/hackathon#githubUrl">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Project"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopic"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#requiresSkill"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Skill"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
     </owl:DatatypeProperty>
     
@@ -737,18 +626,6 @@
 
     <owl:DatatypeProperty rdf:about="http://example.org/hackathon#startDate">
         <rdfs:domain rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
-            </owl:Restriction>
-        </rdfs:domain>
-        <rdfs:domain>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdfs:domain>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
     </owl:DatatypeProperty>
     
@@ -769,7 +646,6 @@
 
     <owl:Class rdf:about="http://example.org/hackathon#Award">
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Hackathon"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Organization"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Participant"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Project"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Skill"/>
@@ -797,19 +673,18 @@
     <!-- http://example.org/hackathon#Hackathon -->
 
     <owl:Class rdf:about="http://example.org/hackathon#Hackathon">
-        <rdfs:subClassOf>
+        <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://example.org/hackathon#hasTeam"/>
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Team"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
+        </owl:equivalentClass>
+        <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
+                <owl:someValuesFrom rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Organization"/>
+        </owl:equivalentClass>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Participant"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Project"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Skill"/>
@@ -835,19 +710,6 @@
     
 
 
-    <!-- http://example.org/hackathon#Organization -->
-
-    <owl:Class rdf:about="http://example.org/hackathon#Organization">
-        <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Participant"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Project"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Skill"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Team"/>
-        <owl:disjointWith rdf:resource="http://example.org/hackathon#Topic"/>
-    </owl:Class>
-    
-
-
     <!-- http://example.org/hackathon#Participant -->
 
     <owl:Class rdf:about="http://example.org/hackathon#Participant">
@@ -863,18 +725,18 @@
     <!-- http://example.org/hackathon#Project -->
 
     <owl:Class rdf:about="http://example.org/hackathon#Project">
-        <rdfs:subClassOf>
+        <owl:equivalentClass>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopic"/>
+                <owl:onProperty rdf:resource="http://example.org/hackathon#hasTopicProject"/>
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
+        </owl:equivalentClass>
+        <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://example.org/hackathon#requiresSkill"/>
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Skill"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
+        </owl:equivalentClass>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Skill"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Team"/>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Topic"/>
@@ -903,13 +765,13 @@
     <!-- http://example.org/hackathon#Team -->
 
     <owl:Class rdf:about="http://example.org/hackathon#Team">
-        <rdfs:subClassOf>
+        <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://example.org/hackathon#hasParticipant"/>
                 <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
                 <owl:onClass rdf:resource="http://example.org/hackathon#Participant"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
+        </owl:equivalentClass>
         <owl:disjointWith rdf:resource="http://example.org/hackathon#Topic"/>
     </owl:Class>
     
@@ -1057,14 +919,8 @@
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
             </owl:Restriction>
         </rdf:type>
-        <rdf:type>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdf:type>
         <hasTeam rdf:resource="http://example.org/hackathon#TeamCityGuard"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicSDG11"/>
+        <hasTopicHackathon rdf:resource="http://example.org/hackathon#TopicSDG11"/>
         <organizedBy rdf:resource="http://example.org/hackathon#OrgEPFL"/>
         <deadline rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-09-05T23:59:00</deadline>
         <endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-09-17T18:00:00</endDate>
@@ -1091,14 +947,8 @@
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
             </owl:Restriction>
         </rdf:type>
-        <rdf:type>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdf:type>
         <hasTeam rdf:resource="http://example.org/hackathon#TeamInfinity"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicSDG3"/>
+        <hasTopicHackathon rdf:resource="http://example.org/hackathon#TopicSDG3"/>
         <organizedBy rdf:resource="http://example.org/hackathon#OrgCERN"/>
         <deadline rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-10-01T23:59:00</deadline>
         <endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-10-12T18:00:00</endDate>
@@ -1125,15 +975,9 @@
                 <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Topic"/>
             </owl:Restriction>
         </rdf:type>
-        <rdf:type>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://example.org/hackathon#organizedBy"/>
-                <owl:someValuesFrom rdf:resource="http://example.org/hackathon#Organization"/>
-            </owl:Restriction>
-        </rdf:type>
         <hasTeam rdf:resource="http://example.org/hackathon#TeamDataHeroes"/>
         <hasTeam rdf:resource="http://example.org/hackathon#TeamInfinity"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicAI4Good"/>
+        <hasTopicHackathon rdf:resource="http://example.org/hackathon#TopicAI4Good"/>
         <organizedBy rdf:resource="http://example.org/hackathon#OrgUNIGE"/>
         <deadline rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-20T23:59:00</deadline>
         <endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-11-30T18:00:00</endDate>
@@ -1147,7 +991,6 @@
     <!-- http://example.org/hackathon#OrgCERN -->
 
     <owl:NamedIndividual rdf:about="http://example.org/hackathon#OrgCERN">
-        <rdf:type rdf:resource="http://example.org/hackathon#Organization"/>
         <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
         <foaf:homepage rdf:resource="https://home.cern"/>
         <foaf:name>CERN</foaf:name>
@@ -1158,7 +1001,6 @@
     <!-- http://example.org/hackathon#OrgEPFL -->
 
     <owl:NamedIndividual rdf:about="http://example.org/hackathon#OrgEPFL">
-        <rdf:type rdf:resource="http://example.org/hackathon#Organization"/>
         <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
         <foaf:homepage rdf:resource="https://www.epfl.ch"/>
         <foaf:name>EPFL</foaf:name>
@@ -1169,7 +1011,6 @@
     <!-- http://example.org/hackathon#OrgUNIGE -->
 
     <owl:NamedIndividual rdf:about="http://example.org/hackathon#OrgUNIGE">
-        <rdf:type rdf:resource="http://example.org/hackathon#Organization"/>
         <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
         <foaf:homepage rdf:resource="https://www.unige.ch"/>
         <foaf:name>University of Geneva</foaf:name>
@@ -1275,7 +1116,7 @@
             </owl:Restriction>
         </rdf:type>
         <hasAward rdf:resource="http://example.org/hackathon#AwardJuryMention"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicSDG11"/>
+        <hasTopicProject rdf:resource="http://example.org/hackathon#TopicSDG11"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillCloudInfra"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillDataScience"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillDevOps"/>
@@ -1303,7 +1144,7 @@
             </owl:Restriction>
         </rdf:type>
         <hasAward rdf:resource="http://example.org/hackathon#AwardBestSustainability"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicSDG11"/>
+        <hasTopicProject rdf:resource="http://example.org/hackathon#TopicSDG11"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillCloudInfra"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillDataScience"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillWebDev"/>
@@ -1331,7 +1172,7 @@
             </owl:Restriction>
         </rdf:type>
         <hasAward rdf:resource="http://example.org/hackathon#AwardBestHealth"/>
-        <hasTopic rdf:resource="http://example.org/hackathon#TopicSDG3"/>
+        <hasTopicProject rdf:resource="http://example.org/hackathon#TopicSDG3"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillML"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillProjectManagement"/>
         <requiresSkill rdf:resource="http://example.org/hackathon#SkillWebDev"/>
@@ -1628,6 +1469,21 @@
         <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
         <skos:prefLabel xml:lang="en">Hackathon topic scheme</skos:prefLabel>
     </owl:NamedIndividual>
+    <rdf:Description>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+    </rdf:Description>
+    <rdf:Description>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+    </rdf:Description>
+    <rdf:Description>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+    </rdf:Description>
+    <rdf:Description>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+    </rdf:Description>
+    <rdf:Description>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+    </rdf:Description>
     
 
 
@@ -1644,9 +1500,6 @@
         <owl:members rdf:parseType="Collection">
             <rdf:Description rdf:about="http://example.org/hackathon#Award"/>
             <rdf:Description rdf:about="http://example.org/hackathon#Hackathon"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Judge"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Mentor"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Participant"/>
             <rdf:Description rdf:about="http://example.org/hackathon#Project"/>
             <rdf:Description rdf:about="http://example.org/hackathon#Team"/>
             <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
@@ -1654,21 +1507,7 @@
             <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
             <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
             <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Organization"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://example.org/hackathon#Award"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Hackathon"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Mentor"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Project"/>
-            <rdf:Description rdf:about="http://example.org/hackathon#Team"/>
-            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-            <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Collection"/>
-            <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
-            <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
-            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Organization"/>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
         </owl:members>
     </rdf:Description>
     <rdf:Description>
@@ -1703,7 +1542,7 @@
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <ns2:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns2:isRuleEnabled>
         <rdfs:comment>Any team with at least one participant who has the Data Science skill becomes a DataScienceTeam</rdfs:comment>
         <rdfs:label>DataScienceTeam</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
@@ -1761,7 +1600,7 @@
         </swrl:head>
     </rdf:Description>
     <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <ns2:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns2:isRuleEnabled>
         <rdfs:comment>Any team that has at least one member with Data Science and at least one member with Web Development becomes a WellBalancedTeam</rdfs:comment>
         <rdfs:label>Well balanced team</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
