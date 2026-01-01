@@ -82,40 +82,56 @@ curl -X POST --data-urlencode "query@samples/queries/list-hackathons.sparql" \
 
 Below are a few example queries you can adapt. Put these in samples/queries/*.sparql for convenience.
 
-- List all hackathons and their names
+- List all Teams, members, and skills
 
 ```sparql
-PREFIX ex: <http://example.org/hackathon#>
-SELECT ?hackathon ?name
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?teamName ?personName ?skillLabel
 WHERE {
-  ?hackathon a ex:Hackathon ;
-             ex:name ?name .
+?team a hack:Team ;
+dct:title ?teamName ;
+hack:hasParticipant ?p .
+?p foaf:name ?personName ;
+hack:hasSkill ?skill .
+?skill skos:prefLabel ?skillLabel .
 }
+ORDER BY ?teamName ?personName ?skillLabel
 ```
 
-- Find participants of a given hackathon
+- Teams and Projects per hackathon
 
 ```sparql
-PREFIX ex: <http://example.org/hackathon#>
-SELECT ?participant ?participantName
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct: <http://purl.org/dc/terms/>
+SELECT ?hackathonTitle ?teamTitle ?projectTitle
 WHERE {
-  ?hackathon a ex:Hackathon ;
-             ex:identifier "hackathon-2025" ; # change identifier
-             ex:hasParticipant ?participant .
-  ?participant ex:name ?participantName .
+?hack a hack:Hackathon ;
+dct:title ?hackathonTitle ;
+hack:hasTeam ?team .
+?team dct:title ?teamTitle ;
+hack:worksOn ?project .
+?project dct:title ?projectTitle .
 }
+ORDER BY ?hackathonTitle ?teamTitle
 ```
 
-- List projects and their teams
+- Required Skills per Project
 
 ```sparql
-PREFIX ex: <http://example.org/hackathon#>
-SELECT ?project ?projectTitle ?member
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?projectTitle ?skillLabel
 WHERE {
-  ?project a ex:Project ;
-           ex:title ?projectTitle ;
-           ex:hasTeamMember ?member .
+?project a hack:Project ;
+dct:title ?projectTitle ;
+hack:requiresSkill ?skill .
+?skill skos:prefLabel ?skillLabel .
 }
+ORDER BY ?projectTitle ?skillLabel
 ```
 
 ## Repository layout and conventions
