@@ -5,7 +5,10 @@ Namespace prefixes
 ------------------
 Use these prefixes at the top of each query (Protégé SPARQL tab):
 
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
+PREFIX dct:  <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 ------------------------------------------------------------
 1) List all hackathons
@@ -14,14 +17,13 @@ Purpose:
 Retrieve all hackathon instances defined in the ontology.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
-SELECT ?hackathon ?name
+SELECT ?hackathon
 WHERE {
-  ?hackathon a ex:Hackathon ;
-             ex:name ?name .
+  ?hackathon a hack:Hackathon .
 }
-ORDER BY ?name
+ORDER BY ?hackathon
 
 
 ------------------------------------------------------------
@@ -31,12 +33,12 @@ Purpose:
 Identify which organizations organized which hackathons.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?hackathon ?organization
 WHERE {
-  ?hackathon a ex:Hackathon ;
-             ex:organizedBy ?organization .
+  ?hackathon a hack:Hackathon ;
+             hack:organizedBy ?organization .
 }
 
 
@@ -47,12 +49,12 @@ Purpose:
 Show which teams participate in which hackathons.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?team ?hackathon
 WHERE {
-  ?team a ex:Team ;
-        ex:participatesIn ?hackathon .
+  ?team a hack:Team ;
+        hack:participatesIn ?hackathon .
 }
 
 
@@ -63,12 +65,12 @@ Purpose:
 For each team, list all its members.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?team ?person
 WHERE {
-  ?team a ex:Team ;
-        ex:hasMember ?person .
+  ?team a hack:Team ;
+        hack:hasMember ?person .
 }
 ORDER BY ?team
 
@@ -80,12 +82,12 @@ Purpose:
 List participants and the skills they possess.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?person ?skill
 WHERE {
-  ?person a ex:Person ;
-          ex:hasSkill ?skill .
+  ?person a hack:Person ;
+          hack:hasSkill ?skill .
 }
 ORDER BY ?person
 
@@ -97,12 +99,12 @@ Purpose:
 Show which projects were developed at which hackathons.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?project ?hackathon
 WHERE {
-  ?project a ex:Project ;
-           ex:developedAt ?hackathon .
+  ?project a hack:Project ;
+           hack:developedAt ?hackathon .
 }
 
 
@@ -113,12 +115,12 @@ Purpose:
 Identify which teams contributed to which projects.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?project ?team
 WHERE {
-  ?project a ex:Project ;
-           ex:hasContributorTeam ?team .
+  ?project a hack:Project ;
+           hack:hasContributorTeam ?team .
 }
 
 
@@ -129,12 +131,12 @@ Purpose:
 Count how many teams participated in each hackathon.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?hackathon (COUNT(?team) AS ?teamCount)
 WHERE {
-  ?team a ex:Team ;
-        ex:participatesIn ?hackathon .
+  ?team a hack:Team ;
+        hack:participatesIn ?hackathon .
 }
 GROUP BY ?hackathon
 ORDER BY DESC(?teamCount)
@@ -147,19 +149,12 @@ Purpose:
 Analyze how skills are distributed across participants.
 
 Query:
-PREFIX ex: <http://example.org/ontology#>
+PREFIX hack: <http://example.org/hackathon#>
 
 SELECT ?skill (COUNT(?person) AS ?count)
 WHERE {
-  ?person a ex:Person ;
-          ex:hasSkill ?skill .
+  ?person a hack:Person ;
+          hack:hasSkill ?skill .
 }
 GROUP BY ?skill
 ORDER BY DESC(?count)
-
-
-------------------------------------------------------------
-Notes:
-- Replace the ex: namespace with the actual ontology namespace.
-- Queries correspond to the executed query figures in the report.
-- Queries are ordered by increasing analytical complexity.
