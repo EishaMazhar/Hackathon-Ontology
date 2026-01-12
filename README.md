@@ -78,7 +78,7 @@ curl -X POST --data-urlencode "query@samples/queries/list-hackathons.sparql" \
   http://localhost:3030/hackathon/sparql
 ```
 
-## Example SPARQL queries
+## Example SPARQL query to Get Started
 
 Below are a first example queries you can adapt. Put these in samples/queries/*.sparql for convenience.
 
@@ -93,12 +93,6 @@ WHERE {
 ORDER BY ?hackathon
 ```
 
-## Repository layout and conventions
-
-- Use meaningful URIs and a consistent namespace (change example.org to your chosen base URI).
-- Use Turtle (.ttl) for human-friendly serializations and OWL (.owl) where appropriate.
-- Keep SPARQL queries in a samples/queries directory and name them clearly.
-
 ## Contributing
 
 Contributions are welcome. Please:
@@ -109,13 +103,11 @@ Contributions are welcome. Please:
 
 ## License
 
-Specify a license for your project (e.g., MIT, Apache-2.0). If you don't have one yet, add a LICENSE file.
+No License at the moment
 
 ## Contact
 
-If you have questions or suggestions, open an issue or contact the repository owner.
+If you have questions or suggestions, open an issue or contact me at eisha.mazhar19@gmail.com.
 
 
 ----
-
-This README provides a starting point for using and extending the Hackathon ontology. Update the file paths and example URIs to reflect the actual files and namespaces in this repository.
