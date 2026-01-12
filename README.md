@@ -80,58 +80,17 @@ curl -X POST --data-urlencode "query@samples/queries/list-hackathons.sparql" \
 
 ## Example SPARQL queries
 
-Below are a few example queries you can adapt. Put these in samples/queries/*.sparql for convenience.
+Below are a first example queries you can adapt. Put these in samples/queries/*.sparql for convenience.
 
-- List all Teams, members, and skills
-
+- List all Hackathons
 ```sparql
 PREFIX hack: <http://example.org/hackathon#>
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-SELECT ?teamName ?personName ?skillLabel
+
+SELECT ?hackathon
 WHERE {
-?team a hack:Team ;
-dct:title ?teamName ;
-hack:hasParticipant ?p .
-?p foaf:name ?personName ;
-hack:hasSkill ?skill .
-?skill skos:prefLabel ?skillLabel .
+  ?hackathon a hack:Hackathon .
 }
-ORDER BY ?teamName ?personName ?skillLabel
-```
-
-- Teams and Projects per hackathon
-
-```sparql
-PREFIX hack: <http://example.org/hackathon#>
-PREFIX dct: <http://purl.org/dc/terms/>
-SELECT ?hackathonTitle ?teamTitle ?projectTitle
-WHERE {
-?hack a hack:Hackathon ;
-dct:title ?hackathonTitle ;
-hack:hasTeam ?team .
-?team dct:title ?teamTitle ;
-hack:worksOn ?project .
-?project dct:title ?projectTitle .
-}
-ORDER BY ?hackathonTitle ?teamTitle
-```
-
-- Required Skills per Project
-
-```sparql
-PREFIX hack: <http://example.org/hackathon#>
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-SELECT ?projectTitle ?skillLabel
-WHERE {
-?project a hack:Project ;
-dct:title ?projectTitle ;
-hack:requiresSkill ?skill .
-?skill skos:prefLabel ?skillLabel .
-}
-ORDER BY ?projectTitle ?skillLabel
+ORDER BY ?hackathon
 ```
 
 ## Repository layout and conventions
