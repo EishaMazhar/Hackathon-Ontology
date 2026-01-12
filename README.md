@@ -1,19 +1,7 @@
 # Hackathon-Ontology
 
-This project contains an ontology for the hackathon ecosystem, relevant files, and sample SPARQL queries to run on that ontology.
-
-## Contents
-
-- ontology/
-  - The RDF/Turtle/OWL files that define the hackathon ontology.
-- samples/
-  - Example RDF instances and SPARQL query files.
-- scripts/
-  - Helper scripts (Python) to load the ontology, run queries, and convert formats.
-- examples/
-  - Example usages and demonstrations.
-
-(If any of the above directories are named differently in the repository, update the paths accordingly.)
+This project includes an ontology for the hackathon ecosystem, relevant files, and sample SPARQL queries to execute against that ontology. 
+I created this ontology as part of my Semantic Web Technologies final Project.
 
 ## Features
 
